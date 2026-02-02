@@ -2,14 +2,15 @@ package com.example.demo.service;
 
 import java.util.List;
 
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import com.example.demo.dto.UserRequestDTO;
+import com.example.demo.dto.UserResponseDTO;
 import com.example.demo.entity.UserEntity;
 import com.example.demo.exception.UserConflictException;
 import com.example.demo.exception.UserNotFoundException;
 import com.example.demo.mapper.UserMapper;
-import com.example.demo.model.UserRequestDTO;
-import com.example.demo.model.UserResponseDTO;
 import com.example.demo.repository.UserRepository;
 
 @Service
@@ -24,16 +25,13 @@ public class UserService {
     }
 
     public List<UserResponseDTO> getUsers(){
-        return mapper.entityListToResponseList(repository.getUsers());
+        return mapper.entityListToResponseList(repository.findAll(Sort.by("id").ascending()));
     }
 
     public UserResponseDTO getUser(String id){
         
-        UserEntity user = repository.find(id);
-
-        if(user == null){
-            throw new UserNotFoundException("User não encontrado.");
-        }
+        UserEntity user = repository.findById(id)
+            .orElseThrow(() -> new UserNotFoundException("User não encontrado."));
         
         return mapper.entityToResponse(user);
     }
@@ -42,7 +40,7 @@ public class UserService {
         
         UserEntity newUser = mapper.requestToEntity(newUserDTO);
 
-        if (repository.find(newUser.getId()) != null) {
+        if (repository.existsById(newUser.getId())) {
             throw new UserConflictException("User já existe.");
         }
         
@@ -57,27 +55,22 @@ public class UserService {
             throw new UserConflictException("O id da URL e do corpo da requisição precisam ser iguais.");
         }
 
-        UserEntity user = repository.find(updateUserDTO.getId());
-
-        if (user == null) {
-            throw new UserNotFoundException("User não encontrado.");
-        }
-
+        UserEntity user = repository.findById(id)
+            .orElseThrow(() -> new UserNotFoundException("User não encontrado."));
+        
         user.setName(updateUserDTO.getName());
         user.setAge(updateUserDTO.getAge());
+
+        repository.save(user);
         
         return mapper.entityToResponse(user);
     }
 
     public void deleteUser(String id){
         
-        UserEntity user = repository.find(id);
+        UserEntity user = repository.findById(id)
+            .orElseThrow(() -> new UserNotFoundException("User não encontrado."));
         
-        if(user != null){
-            repository.exclude(user);
-        }
-        else{
-             throw new UserNotFoundException("User não encontrado.");
-        }
+            repository.delete(user);
     } 
 }

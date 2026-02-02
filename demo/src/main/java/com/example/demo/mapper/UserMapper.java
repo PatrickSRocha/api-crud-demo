@@ -5,9 +5,9 @@ import java.util.List;
 
 import org.springframework.stereotype.Component;
 
+import com.example.demo.dto.UserRequestDTO;
+import com.example.demo.dto.UserResponseDTO;
 import com.example.demo.entity.UserEntity;
-import com.example.demo.model.UserRequestDTO;
-import com.example.demo.model.UserResponseDTO;
 
 @Component
 public class UserMapper {
@@ -42,4 +42,3 @@ public class UserMapper {
         return  listDTO;
     }
 }
-

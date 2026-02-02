@@ -1,9 +1,26 @@
 package com.example.demo.entity;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+
+@Entity
+@Table(name="users")
 public class UserEntity{
     
+    @Id
+    @Column(name="user_id", nullable=false, updatable=false, length=20)
     private String id;
+
+    @Column(name="user_name", nullable=false, length=20)
     private String name;
+    
+    @Min(1)
+    @Max(120)
+    @Column(name="user_age", nullable=false)
     private Integer age;
 
     protected UserEntity(){

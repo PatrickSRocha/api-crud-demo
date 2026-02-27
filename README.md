@@ -1,54 +1,66 @@
-# API DEMO
+# API-CRUD-DEMO
 
-<p>Estudo de API REST com operações de CRUD utilizando Java e Spring Boot.</p>
-<br>
+<p>Esta é uma API REST com operações CRUD, desenvolvida com Java 21 e Spring Boot, 
+aplicando arquitetura em camadas, persistência com Spring Data JPA e documentação com OpenAPI.</p>
 
-## Apresentação
-
-<p>Olá, tudo bem? Meu nome é Patrick e eu sou um desenvolvedor back-end Java no início da carreira.</p>
-
-<p>No momento, estou estudando APIs REST com operações CRUD e integração com banco de dados utilizando JPA.</p>
-
-<p>Em caso de qualquer dúvida, sugestão ou correção, por favor entre em contato comigo pelo LinkedIn. Todo
- tipo de comentário será muito bem-vindo.</p>
+<p>O objetivo deste projeto é consolidar conceitos relacionados ao desenvolvimento back-end, 
+utilizando Java e o ecossistema Spring.</p>
 <br>
 
 ## Tecnologias usadas
 
-- Sistema: Windows 11
-- VS Code: 1.108.2
-- Java: 21.0.9
-- Maven: 3.9.11
-- PostgreSQL: 18.1
-- Spring Boot: 4.0.0
-- Spring JPA (Hibernate)
-- Spring Web
-- Spring MVC
+- Java 21
+- Maven
+- OpenAPI (Swagger)
+- PostgreSQL
+- Spring Boot
+- Spring Data JPA (Hibernate)
 <br>
 
-## Requisitos de funcionamento
-
-<p>Para conseguir fazer uso da API é necessário que o usuário faça algumas configurações.</p>
-
-1. Criar banco PostgreSQL;
-2. Preencher os dados de configurações do banco no application-prod.properties;
-3. Definir as configurações do JPA, Hibernate e logs no application-prod.properties. 
+## Endpoints
+| Método | Endpoint | Descrição |
+|----|----|----|
+| GET | /user | Retorna a lista de usuários cadastrados. | 
+| GET | /user/{id} | Retorna o usuário por ID. |
+| POST | /user | Cria um novo usuário. | 
+| PUT | /user/{id} | Atualiza usuário por ID. |
+| DELETE | /user/{id} | Remove o usuário pelo ID. |
+| Swagger JSON | /json | Documentação JSON da API (customizada). |
+| Swagger UI | /doc | Interface gráfica da documentação da API (customizada). |
 <br>
 
-<p>OBS.: É possível utilizar outros profiles de configuração alterando o spring.profiles.active.</p>
+## Objetivos futuros
+
+- Implementar Spring Data JPA. ✅
+- Integrar persistência de dados com PostgreSQL. ✅
+- Implementar documentação web com OpenAPI. ✅
+- Implementar Spring Security.
 <br>
 
-## Funcionalidades
+## Como executar
 
-- GET /api/users: Retorna lista com todos os usuários salvos.
-- GET /api/users/{id}: Retorna o usuário com ID indicado.
-- POST /api/users: Salva usuário.
-- PUT /api/users/{id}: Atualiza usuário.
-- DELETE /api/users/{id}: Deleta usuário.
+### 1. Clonar o repositório
+```git clone https://github.com/seuusuario/api-crud-demo.git```
+<br>
+
+### 2. Configurar o banco de dados
+```CREATE DATABASE meu_banco;```
+<br>
+
+### 3. Configurar application-prod.properties
+```spring.datasource.url = jdbc:postgresql://localhost:5432/meu_banco```  
+```spring.datasource.username = username```  
+```spring.datasource.password = password```  
+```spring.jpa.hibernate.ddl-auto = create```  
+<br>
+
+### 4. Executar aplicação
+```mvn spring-boot:run```  
+<br>
 <br>
 
 ## Documentação
-  
+
 ### Tabela de requisitos funcionais e não funcionais
 ![Requisitos](documents/requisitos.png)
 <br>
@@ -60,30 +72,20 @@
 ### Diagrama de camadas
 ![diagrama de camadas](documents/camadas.png)
 <br>
+ 
+ ## Dados
 
-## Objetivos futuros
-
-<p>Como esse projeto tem o propósito de estudos, optei por fazer sua evolução aos poucos com atualizações constantes, 
-com esse tópico servindo como um checklist guia para modificações futuras.</p>
-
-- Implementar Spring JPA ✅
-- Integrar banco de dados PostgreSQL ✅
-- Implementar Spring Security
-- Implementar Swagger
-<br>
-
-## Dados do projeto
-
-- Autor: Patrick Silva
-- Versão: 1.1
-- Última atualização: 02/02/2026
+- Autor: Patrick Rocha
+- Versão: 1.2
+- Última atualização: 27-02-2026
 - Contato: www.linkedin.com/in/patrick-rocha-149244289
 <br>
 
-## Notas de atualização - versão 1.1
-- Mudança dos DTOs do pacote model para o pacote dto.
-- Implementação do Spring JPA com o banco PostgreSQL.
-- Armazenamento de dados sensíveis em arquivo de configurações local.
+## Notas de atualização - versão 1.2
+- Normalização de código para o idioma inglês.
+- Implementação de comentários com JavaDoc.
+- Implementação de documentação com OpenAPI.
+- Alteração de nomes de classes e atributos.
+- Criação do pacote swagger.
 - Alterações no README.
 <br>
- 

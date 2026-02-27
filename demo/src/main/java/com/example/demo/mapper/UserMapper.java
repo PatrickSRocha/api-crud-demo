@@ -5,40 +5,61 @@ import java.util.List;
 
 import org.springframework.stereotype.Component;
 
-import com.example.demo.dto.UserRequestDTO;
-import com.example.demo.dto.UserResponseDTO;
+import com.example.demo.dto.UserRequest;
+import com.example.demo.dto.UserResponse;
 import com.example.demo.entity.UserEntity;
 
+/** 
+ * Mapper responsible for converting between UserEntity and DTO objects.
+ * 
+ * @version 1.2
+ * @since 27-02-2026
+*/
 @Component
-public class UserMapper {
+public class UserMapper{
     
-    public UserResponseDTO entityToResponse(UserEntity user){
-        
-        return new UserResponseDTO( 
-            user.getId(),
-            user.getName(),
-            user.getAge()
-        );
-    }
-
-    public UserEntity requestToEntity(UserRequestDTO userDTO){
-        
+    /**
+     * Converts a UserRequest to a UserEntity.
+     * 
+     * @param userDTO the UserRequest to be converted.
+     * @return the UserEntity.
+     */
+    public UserEntity requestToEntity(UserRequest userRequest){
         return new UserEntity(
-            userDTO.getId(),
-            userDTO.getName(),
-            userDTO.getAge()
+            userRequest.getCpf(),
+            userRequest.getName(), 
+            userRequest.getAge());
+    }
+
+    /**
+     * Converts a UserEntity to a UserResponse.
+     * 
+     * @param user the UserEntity to be converted.
+     * @return the UserResponse.
+     */
+    public UserResponse entityToResponse(UserEntity userEntity){
+        return new UserResponse( 
+            userEntity.getId().toString(),
+            userEntity.getCpf(),
+            userEntity.getName(),
+            userEntity.getAge()
         );
     }
 
-    public List<UserResponseDTO> entityListToResponseList(List<UserEntity> users) {
+    /**
+     * Converts a list of UserEntity objects to a list of UserResponse objects. 
+     * 
+     * @param users the list of UserEntity objects.
+     * @return a list of UserResponse objects. 
+     */
+    public List<UserResponse> entityListToResponseList(List<UserEntity> users){
+        List<UserResponse> listUserResponse = new ArrayList<>();
 
-        List<UserResponseDTO> listDTO = new ArrayList<>();
-
-        for (UserEntity user : users) {
-            UserResponseDTO userDTO = entityToResponse(user);
-            listDTO.add(userDTO);
+        for (UserEntity user : users){
+            UserResponse userDTO = entityToResponse(user);
+            listUserResponse.add(userDTO);
         }
 
-        return  listDTO;
+        return listUserResponse;
     }
 }

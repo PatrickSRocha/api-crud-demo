@@ -1,20 +1,29 @@
 package com.example.demo.service;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import com.example.demo.dto.UserRequestDTO;
-import com.example.demo.dto.UserResponseDTO;
+import com.example.demo.dto.UserRequest;
+import com.example.demo.dto.UserResponse;
 import com.example.demo.entity.UserEntity;
-import com.example.demo.exception.UserConflictException;
-import com.example.demo.exception.UserNotFoundException;
+import com.example.demo.exception.ConflictException;
+import com.example.demo.exception.NotFoundException;
 import com.example.demo.mapper.UserMapper;
 import com.example.demo.repository.UserRepository;
 
+import jakarta.transaction.Transactional;
+
+/** 
+ * Service responsible for handling business logic.
+ * 
+ * @version 1.2
+ * @since 27-02-2026
+*/
 @Service
-public class UserService {
+public class UserService{
 
     private final UserRepository repository;
     private final UserMapper mapper;
@@ -24,24 +33,52 @@ public class UserService {
         this.mapper = mapper;
     }
 
-    public List<UserResponseDTO> getUsers(){
+    /**
+     * Finds a user by ID.
+     * 
+     * @param id the user identifier.
+     * @return the UserEntity.
+     * @throws UserNotFoundException if the user is not found.
+     */
+    public UserEntity findUserById(UUID id){
+        UserEntity user = repository.findById(id)
+            .orElseThrow(() -> new NotFoundException("User not found"));
+        
+        return user;
+    }
+
+    /**
+     * Retrieves a list of users from the database.
+     * 
+     * @return a list of UserResponse objects. 
+    */
+    public List<UserResponse> getUsers(){
         return mapper.entityListToResponseList(repository.findAll(Sort.by("id").ascending()));
     }
 
-    public UserResponseDTO getUser(String id){
-        
-        UserEntity user = repository.findById(id)
-            .orElseThrow(() -> new UserNotFoundException("User não encontrado."));
-        
-        return mapper.entityToResponse(user);
+    /**
+     * Retrieves a user from the database by ID. 
+     * 
+     * @param id the user identifier.
+     * @return the UserResponse.
+    */
+    public UserResponse getUser(UUID id){
+        return mapper.entityToResponse(findUserById(id));
     }
 
-    public UserResponseDTO saveUser(UserRequestDTO newUserDTO){
-        
-        UserEntity newUser = mapper.requestToEntity(newUserDTO);
+    /**
+     * Saves a new user in the database.
+     * 
+     * @param newUserDTO the UserRequest containing user data.
+     * @return the UserResponse.
+     * @throws UserConflictException if a user with the same ID already exists in the database.
+    */
+   @Transactional
+    public UserResponse saveUser(UserRequest newUserRequest){
+        UserEntity newUser = mapper.requestToEntity(newUserRequest);
 
-        if (repository.existsById(newUser.getId())) {
-            throw new UserConflictException("User já existe.");
+        if (repository.findByCpf(newUser.getCpf()).isPresent()) {
+            throw new ConflictException("A user already exists");
         }
         
         repository.save(newUser);
@@ -49,28 +86,33 @@ public class UserService {
         return mapper.entityToResponse(newUser);
     }
 
-    public UserResponseDTO updateUser(String id, UserRequestDTO updateUserDTO){
+    /**
+     * Updates an existing user in the database by ID. 
+     * 
+     * @param id the user identifier.
+     * @param updateUserDTO the UserRequest containing updated data.
+     * @return the UserResponse.
+    */
+   @Transactional
+    public UserResponse updateUser(UUID id, UserRequest updateUserDTO){
+        UserEntity user = findUserById(id);
         
-        if (!id.equals(updateUserDTO.getId())) {
-            throw new UserConflictException("O id da URL e do corpo da requisição precisam ser iguais.");
-        }
-
-        UserEntity user = repository.findById(id)
-            .orElseThrow(() -> new UserNotFoundException("User não encontrado."));
-        
+        user.setCpf(updateUserDTO.getCpf());
         user.setName(updateUserDTO.getName());
         user.setAge(updateUserDTO.getAge());
-
-        repository.save(user);
         
+        repository.save(user);
+
         return mapper.entityToResponse(user);
     }
 
-    public void deleteUser(String id){
-        
-        UserEntity user = repository.findById(id)
-            .orElseThrow(() -> new UserNotFoundException("User não encontrado."));
-        
-            repository.delete(user);
+    /**
+     * Deletes a user from the database.
+     * 
+     * @param id the user identifier.
+    */
+   @Transactional
+    public void deleteUser(UUID id){
+        repository.delete(findUserById(id));
     } 
 }
